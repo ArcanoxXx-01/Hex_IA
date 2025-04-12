@@ -1,6 +1,6 @@
 from base import *
 from Random_player import *
-from Minimax_player import *
+from player import *
 from My_board import *
 import time
 
