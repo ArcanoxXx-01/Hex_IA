@@ -1,0 +1,114 @@
+\documentclass[11pt]{article}
+\usepackage[spanish]{babel}
+
+\usepackage{sectsty}
+\usepackage{graphicx}
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\title{ Hex Ia }
+\author{ Dario Lopez Falcon }
+\date{\today}
+
+\begin{document}
+\maketitle	
+
+\section{Estructura del poryecto}
+
+\subsection{Clases:}
+El plroyecto consta solo de dos clases:
+
+\texttt{1-class MinMax\_Player(Player):}\\
+Esta es la clase principal que cuenta con los metodos necesarios para generar las jugadas segun una configuracion de tablero y un usuario.\\
+
+Para crear una instancia de la misma se debe llamar al metodo \texttt{MinMax\_Player(id)}, donde id es 1 o 2 (identificador del jugador).
+
+Esta clase cuenta con el metodo \texttt{play}, que recibe como parametros a \texttt{board}: HexBoard, y \texttt{time}: int. Este metodo se encarga de generar 
+una jugada segun una configuracion de tablero, usando el algoritmo de \texttt{minimax} y aplpicando la \texttt{poda alpha-beta} para optimizar
+
+\texttt{2- class DSU(Player):}\\
+
+Esta clase es una implementacion de la estructura de datos DSU usada para manejar de manera eficiente 
+conjuntos disjuntos.
+Es usada en el calculo de una de las heuristicas.
+
+Para facilitar su \texttt{uso} se concentro toda la logica en un solo archivo (\texttt{player.py})
+
+\section{¿Como se usa?}
+
+Toda la logica se encuentra concentrada en la clase \texttt{MinMax\_Player} dentro de \texttt{player.py}, por lo que 
+primero debemos importar la clase de la libreria usando \texttt{from player.py import MinMax\_Player}
+
+Luego solo faltaria crear una instancia de dicha clase llamando al metodo \texttt{MinMax\_Player}\\
+
+Ejemplo: \[ player = MinMax\_Player(1)\]
+
+Para generar jugadas usamos el metodo \texttt{play} pasandole un tablero y un limited de tiempo, el cual es opcional y por defecto es 10s\\
+
+Ejemplo: \[ player.play(board, 2)\] esto devolvera una tupla: (fila, columna) la cual hace referencia a la jugada generada por la ia.
+
+
+\section{¿Cómo funciona?}
+
+Como el juego de Hex es un problema se suma cero, es ideal atacarlo usando el algoritmo de Minimax con poda apha-beta.\\
+\texttt{Minimax:}\\
+
+    1-Es un algoritmo para juegos de dos jugadores (ej: Hex) que maximiza las ganancias del jugador actual y minimiza las del oponente.\\
+
+    2-Explora un árbol de posibles movimientos alternando entre capas MAX (elige el mejor valor) y MIN (elige el peor valor para MAX).\\
+\texttt{Poda Alpha-Beta:}\\
+    \begin{itemize}
+    \item Optimización de Minimax que reduce el número de nodos evaluados.\\
+    \item Alpha \(\alpha\): Mejor valor encontrado para MAX \(inicial: -\infty\).\\
+
+    \item Beta \(\beta\): Mejor valor encontrado para MIN \(inicial: +\infty\).\\
+
+    \item Podar (cortar) ramas cuando:\\
+        \begin{itemize}
+            \item En capa MAX: si un valor \(\geq \beta\) (el rival MIN no permitirá esta rama).\\
+            \item En capa MIN: si un valor \(\leq \alpha\) (MAX ya tiene una opción mejor).\\
+        \end{itemize}
+
+    
+    \end{itemize}
+
+    Resumen:
+
+    Minimax busca la mejor jugada evaluando todas las posibilidades, mientras que
+    Alpha-Beta acelera el proceso descartando ramas inútiles sin evaluarlas.
+    \section{Heurísticas Principales}
+    El código implementa varias heurísticas para evaluar movimientos en el juego Hex, cada una con un peso específico:
+    
+    \begin{itemize}
+        \item \textbf{Puentes (bridges)}: Detecta patrones que forman conexiones estratégicas (peso: 100)
+        \item \textbf{Cierre de puentes (close\_bridge)}: Cierra puentes del jugador cuando podrian ser bloqueados por el oponente (peso: 200)
+        \item \textbf{Centro (center)}: Favorece movimientos hacia el centro del tablero (peso: 5)
+        \item \textbf{Camino completo (complete\_road)}: Completa conexiones ganadoras (peso: 100)
+        \item \textbf{Victoria (win)}: Movimiento ganador inmediato (peso: 100000)
+        \item \textbf{Bloqueo (block\_enemy)}: Interrumpe jugadas estratégicas del oponente (Cerrar puentes del oponente) (peso: 100)
+        \item \textbf{Vecinos (neighbor)}: Penaliza movimientos con muchos vecinos enemigos (peso: -1000)
+        \item \textbf{Estructura de unión (dsu)}: Evalúa conexiones potenciales usando estructura de datos union-find (peso: 2)
+    \end{itemize}
+    
+    \section{Funciones Clave}
+    \begin{itemize}
+        \item \texttt{h()}: Función principal que combina todas las heurísticas
+        \item \texttt{bridges()}: Detecta patrones de puente predefinidos
+        \item \texttt{close\_bridge()}: Identifica oportunidades para cerrar puentes enemigos
+        \item \texttt{calculate()}: Implementa algoritmo DSU para evaluar conexiones
+        \item \texttt{bfs()}: Usa búsqueda en amplitud para evaluar caminos potenciales
+    \end{itemize}
+    
+    \section{Conclusión}
+    El sistema utiliza múltiples heurísticas con diferentes pesos para evaluar movimientos, combinando estrategias ofensivas (creación de caminos) y defensivas (bloqueo). La función principal \texttt{h()} agrega estos componentes para producir una evaluación global de cada movimiento potencial.
+
+
+
+
+\end{document}

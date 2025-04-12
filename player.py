@@ -219,6 +219,7 @@ def bfs(state: HexBoard, move, id, flag: bool):
     return dp[move[0] * state.size + move[1]]
 
 #============== UTILS ==============
+
 def valid(size: int, cell: tuple[int, int]) -> bool:
   return 0 <= cell[0] < size and 0 <= cell[1] < size
 
